@@ -544,7 +544,7 @@ void CCharacter::Tick()
 		vec2 Dir;
 		Dir = normalize(m_Pos - pTarget->m_Pos);
 
-		pTarget->TakeDamage(vec2(0.f, -1.f) + normalize(Dir + vec2(0.f, -1.1f)) * 32.0f, 0,
+		pTarget->TakeDamage(Dir * 32.0f, 0,
 			m_pPlayer->GetCID(), m_ActiveWeapon);
 		Hits++;
 	}

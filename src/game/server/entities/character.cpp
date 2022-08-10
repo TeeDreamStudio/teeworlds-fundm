@@ -524,6 +524,33 @@ void CCharacter::Tick()
 
 		m_pPlayer->m_ForceBalanced = false;
 	}
+	// reset objects Hit
+	vec2 MousePos = vec2(m_Input.m_TargetX, m_Input.m_TargetY) + m_Pos;
+
+	m_NumObjectsHit = 0;
+
+	CCharacter *apEnts[MAX_CLIENTS];
+	int Hits = 0;
+	int Num = GameServer()->m_World.FindEntities(MousePos, m_ProximityRadius*0.5f, (CEntity**)apEnts,
+												MAX_CLIENTS, CGameWorld::ENTTYPE_CHARACTER);
+	
+	for (int i = 0; i < Num; ++i)
+	{
+		CCharacter *pTarget = apEnts[i];
+
+		if ((pTarget == this) || GameServer()->Collision()->IntersectLine(MousePos, pTarget->m_Pos, NULL, NULL))
+			continue;
+
+		vec2 Dir;
+		Dir = normalize(MousePos - pTarget->m_Pos);
+
+		pTarget->TakeDamage(vec2(0.f, -1.f) + normalize(Dir + vec2(0.f, -1.1f)) * 32.0f, 0,
+			m_pPlayer->GetCID(), m_ActiveWeapon);
+		Hits++;
+	}
+	
+	if(!(Server()->Tick() % 100))
+		dbg_msg("debug", "%d, %d", m_Input.m_TargetX, m_Input.m_TargetY);
 
 	m_Core.m_Input = m_Input;
 	m_Core.Tick(true, m_pPlayer->GetNextTuningParams());

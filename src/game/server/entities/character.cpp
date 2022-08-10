@@ -542,15 +542,12 @@ void CCharacter::Tick()
 			continue;
 
 		vec2 Dir;
-		Dir = normalize(MousePos - pTarget->m_Pos);
+		Dir = normalize(m_Pos - pTarget->m_Pos);
 
 		pTarget->TakeDamage(vec2(0.f, -1.f) + normalize(Dir + vec2(0.f, -1.1f)) * 32.0f, 0,
 			m_pPlayer->GetCID(), m_ActiveWeapon);
 		Hits++;
 	}
-	
-	if(!(Server()->Tick() % 100))
-		dbg_msg("debug", "%d, %d", m_Input.m_TargetX, m_Input.m_TargetY);
 
 	m_Core.m_Input = m_Input;
 	m_Core.Tick(true, m_pPlayer->GetNextTuningParams());
